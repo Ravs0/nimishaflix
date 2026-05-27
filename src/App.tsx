@@ -75,6 +75,13 @@ const AOI_MELODY = [
   { note: 'G5', dur: 0.8 }, { note: 'E5', dur: 0.8 }, { note: 'D5', dur: 0.8 }, { note: 'C5', dur: 0.8 }, { note: 'D5', dur: 1.6 }
 ]
 
+const CELESTIAL_MELODY = [
+  { note: 'C5', dur: 0.5 }, { note: 'E5', dur: 0.5 }, { note: 'G5', dur: 0.5 }, { note: 'C6', dur: 1.0 },
+  { note: 'E5', dur: 0.5 }, { note: 'G5', dur: 0.5 }, { note: 'C6', dur: 0.5 }, { note: 'E6', dur: 1.0 },
+  { note: 'D5', dur: 0.5 }, { note: 'F5', dur: 0.5 }, { note: 'A5', dur: 0.5 }, { note: 'D6', dur: 1.0 },
+  { note: 'F5', dur: 0.5 }, { note: 'A5', dur: 0.5 }, { note: 'D6', dur: 0.5 }, { note: 'F6', dur: 1.0 }
+]
+
 class ChiptunePlayer {
   private ctx: AudioContext | null = null
   private activeNodes: Array<{ osc: OscillatorNode; gain: GainNode }> = []
@@ -154,11 +161,11 @@ class ChiptunePlayer {
       subOsc.frequency.setValueAtTime(freq / 2, time)
 
       gainNode.gain.setValueAtTime(0, time)
-      gainNode.gain.linearRampToValueAtTime(0.18, time + 0.02)
+      gainNode.gain.linearRampToValueAtTime(0.45, time + 0.02)
       gainNode.gain.exponentialRampToValueAtTime(0.0001, time + duration - 0.02)
 
       subGain.gain.setValueAtTime(0, time)
-      subGain.gain.linearRampToValueAtTime(0.06, time + 0.04)
+      subGain.gain.linearRampToValueAtTime(0.20, time + 0.04)
       subGain.gain.exponentialRampToValueAtTime(0.0001, time + duration - 0.02)
 
       osc.connect(gainNode)
@@ -1142,8 +1149,8 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
 
 interface VinylPlayerProps {
   playing: boolean
-  togglePlayback: () => void
-  currentTrack: 'bday' | 'japanese'
+  togglePlayback: (e: React.MouseEvent) => void
+  currentTrack: 'bday' | 'japanese' | 'celestial'
 }
 
 function VinylPlayer({ playing, togglePlayback, currentTrack }: VinylPlayerProps) {
@@ -1157,7 +1164,11 @@ function VinylPlayer({ playing, togglePlayback, currentTrack }: VinylPlayerProps
         {playing ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
         <span className="uppercase tracking-wider font-bold">
           {playing 
-            ? (currentTrack === 'bday' ? 'Happy Birthday 🎂' : 'Aoi Sangoshou 🌊') 
+            ? (currentTrack === 'bday' 
+                ? 'Happy Birthday 🎂' 
+                : currentTrack === 'japanese' 
+                  ? 'Aoi Sangoshou 🌊' 
+                  : 'Star Box 💫') 
             : 'Play Music'}
         </span>
       </div>
@@ -1189,17 +1200,19 @@ function Footer({ name }: { name: string }) {
 /* ──────────────  MAIN APP  ────────────── */
 export default function App() {
   const [playing, setPlaying] = useState(false)
-  const [currentTrack, setCurrentTrack] = useState<'bday' | 'japanese'>('bday')
+  const [currentTrack, setCurrentTrack] = useState<'bday' | 'japanese' | 'celestial'>('bday')
 
   // Synthesizer playback reactive control
   useEffect(() => {
     if (playing) {
       if (currentTrack === 'bday') {
-        synthPlayer.start(BDAY_MELODY, false, 135, () => {
+        synthPlayer.start(BDAY_MELODY, false, 155, () => {
           setCurrentTrack('japanese')
         })
+      } else if (currentTrack === 'japanese') {
+        synthPlayer.start(AOI_MELODY, true, 175)
       } else {
-        synthPlayer.start(AOI_MELODY, true, 140)
+        synthPlayer.start(CELESTIAL_MELODY, true, 115)
       }
     } else {
       synthPlayer.stop()
@@ -1212,12 +1225,13 @@ export default function App() {
 
   // Screen interaction trigger to resume/init audio context
   useEffect(() => {
-    const playOnInteraction = () => {
+    const playOnInteraction = (e: MouseEvent | TouchEvent) => {
+      if (e.target && (e.target as HTMLElement).closest('.vinyl-player-widget')) {
+        return
+      }
       if (!playing) {
         synthPlayer.init()
         setPlaying(true)
-        window.removeEventListener('click', playOnInteraction)
-        window.removeEventListener('touchstart', playOnInteraction)
       }
     }
 
@@ -1230,7 +1244,38 @@ export default function App() {
     }
   }, [playing])
 
-  const togglePlayback = () => {
+  // Dynamic Scroll-based Music Changer
+  useEffect(() => {
+    const options = { threshold: 0.15 }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (entry.target.id === 'wish') {
+            setCurrentTrack('celestial')
+          } else if (entry.target.id === 'reels' || entry.target.id === 'episodes') {
+            setCurrentTrack('japanese')
+          } else if (entry.target.id === 'hero') {
+            setCurrentTrack('bday')
+          }
+        }
+      })
+    }, options)
+
+    const hero = document.getElementById('hero')
+    const reels = document.getElementById('reels')
+    const episodes = document.getElementById('episodes')
+    const wish = document.getElementById('wish')
+
+    if (hero) observer.observe(hero)
+    if (reels) observer.observe(reels)
+    if (episodes) observer.observe(episodes)
+    if (wish) observer.observe(wish)
+
+    return () => observer.disconnect()
+  }, [])
+
+  const togglePlayback = (e: React.MouseEvent) => {
+    e.stopPropagation()
     synthPlayer.init()
     setPlaying(!playing)
   }
@@ -1261,10 +1306,12 @@ export default function App() {
       <FloatingShape emoji="🌸" style={{ top: '70%', left: '2%' }} animation="float 7s ease-in-out infinite 1s" />
       <FloatingShape emoji="💫" style={{ top: '88%', left: '5%' }} animation="float 6s ease-in-out infinite 2s" />
 
-      <HeroBanner name={NAME} date={DATE} age={AGE} onPlayClick={() => {
-        const el = document.getElementById('reels')
-        if (el) el.scrollIntoView({ behavior: 'smooth' })
-      }} />
+      <div id="hero">
+        <HeroBanner name={NAME} date={DATE} age={AGE} onPlayClick={() => {
+          const el = document.getElementById('reels')
+          if (el) el.scrollIntoView({ behavior: 'smooth' })
+        }} />
+      </div>
       
       <PhotosRow />
       <VideosRow />
