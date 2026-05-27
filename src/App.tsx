@@ -8,10 +8,11 @@ const NAME = 'NIMISHA'
 const DATE = 'MAY 28'
 const AGE = 22
 
-const MESSAGE = `HAPPY BIRTHDAY TO SOMEONE WHOSE STRENGTH, DIGNITY, AND DYNAMIC SPIRIT INSPIRE EVERYONE AROUND HER!
-YOUR JOURNEY HAS BEEN A BEAUTIFUL TESTAMENT TO RESILIENCE AND GRACE.
+// Sharp, raw, cinematic non-cheesy copy
+const MESSAGE = `ANOTHER SEASON, ANOTHER SET OF ABSOLUTELY UNFILTERED REALITIES. 
+FROM NAVIGATING THREE DIVERSE STATES TO SURVIVING CHILDHOOD WITH AN EXTRAORDINARY DEGREE OF RESILIENCE, THIS SEASON MARKS 22 YEARS OF SHOT-CALLING. 
 
-MAY THIS SEASON BRING YOU GLOWING SUCCESS, ENDLESS ADVENTURES, AND THE FULFILLMENT OF YOUR DEAREST DREAMS.`
+UHD DYNAMIC RATING: 100% RAW. NO HALO EFFECTS. NO HALLMARK CARDS.`
 
 const PHOTOS = [
   { url: '/photo1.jpg', title: 'THE THANOS INITIATIVE 👑', rating: '99% MATCH' },
@@ -20,7 +21,7 @@ const PHOTOS = [
 ]
 
 const VIDEOS = [
-  { url: '/vid5.mp4', title: 'PASTRY MASSACRE 🍰', rating: '99% MATCH', description: 'THAT IS HOW I IMAGINE YOU CUTTING THE CAKE RN' },
+  { url: '/vid5.mp4', title: 'PASTRY MASSACRE 🍰', rating: '99% MATCH', description: 'THAT IS HOW I IMAGINE YOU CUTTING THE CAKE RN. NO MERCY.' },
   { url: '/vid1.mp4', title: 'UNCENSORED JOY 💖', rating: '99% MATCH' },
   { url: '/vid2.mp4', title: 'ROAD TRIP VIBES 🚗', rating: '98% MATCH' },
   { url: '/vid3.mp4', title: 'TOKYO DOME MEMORIES 🇯🇵', rating: '99% MATCH' },
@@ -30,23 +31,23 @@ const VIDEOS = [
 const EPISODES = [
   {
     number: 1,
-    title: 'THE TRI-STATE JOURNEY',
+    title: 'THE TRI-STATE MIGRATION',
     duration: '45m',
-    desc: 'FROM THE DRIER LANDS OF JHARKHAND TO THE ANCIENT HEART OF BIHAR, AND FINALLY THE RICH CULTURAL WINDS OF BENGAL. A GRIPPING CHAPTER TRACING HER FOOTSTEPS THROUGH THREE DIVERSE STATES, SHAPING THE DYNAMIC AND ADAPTABLE NIMISHA WE CELEBRATE TODAY.',
+    desc: 'JHARKHAND, BIHAR, AND BENGAL. A DUSTY, LONG-WINDED TRANSIT ACROSS TRIPLE FRONTIERS THAT FORGED THE UNCOMPROMISING AND MULTI-FACETED NIMISHA OF S22. DEVOID OF FICTION, FULL OF GRIT.',
     url: '/photo1.jpg'
   },
   {
     number: 2,
-    title: 'RESILIENCE IN THE SHADOWS',
+    title: 'THE SURVIVAL INITIATIVE',
     duration: '50m',
-    desc: 'A DEEP LOOK INTO HER CHILDHOOD AS A YOUNGER SISTER AND DAUGHTER. GROWING UP WAS NOT AN EASY RIDE, WITH NUMEROUS RESPONSIBILITIES AND HARDSHIPS WEIGHING HEAVILY, YET HER INNER STRENGTH AND INDOMITABLE GRACE ALCHEMIZED ADVERSITY INTO A BRILLIANT SPIRIT.',
+    desc: "GROWING UP AS A YOUNGER SISTER AND DAUGHTER ISN'T A CAKEWALK. NO CHEAP COZY BACKDROP HERE—JUST COLD HARD RESPONSIBILITY, DENSE EXPECTATIONS, AND AN UNBREAKABLE RESISTANCE THAT ROASTS ADVERSITY ON A DAILY BASIS.",
     url: '/photo2.jpg'
   },
   {
     number: 3,
-    title: 'THE SUNLIGHT ALLIANCE',
+    title: 'THE SHOT-CALLER S22',
     duration: '48m',
-    desc: 'DESPITE EVERY SINGLE HURDLE AND UNFAIR CHANCE, HER WARMTH, MAGNETIC SMILE, AND BRILLIANT COMPASSION WIN THE DAY, PROVING THAT THE HARDEST ROADS ALWAY FORGE THE MOST RADIANT STARS.',
+    desc: "NIMISHA DECIDES THAT INSTEAD OF COMPLAINING ABOUT LIFE'S HIGH-BATTERY DRAINS AND BORING CLICHÉS, SHE'LL JUST OUT-COMPASSION AND OUT-SMILE THE ENTIRE CRITIC SYSTEM. A STANDOUT FINALE.",
     url: '/photo3.jpg'
   }
 ]
@@ -392,7 +393,7 @@ function PhotosRow() {
               <div className="p-6 bg-neutral-950">
                 <h3 className="text-xl font-bold mb-1 text-red-500 tracking-wider uppercase">{selectedPhoto.title}</h3>
                 <p className="text-sm text-green-400 font-semibold mb-2">99% PERFECT SYNC • EXCLUSIVELY SHOT</p>
-                <p className="text-sm text-neutral-400">Frozen in pure cinematic high definition, celebrating an milestone worth cherishing eternally.</p>
+                <p className="text-sm text-neutral-400">Frozen in pure cinematic high definition, celebrating a milestone worth cherishing eternally.</p>
               </div>
             </motion.div>
           </motion.div>
@@ -479,11 +480,11 @@ function EpisodesList() {
   return (
     <section className="episodes-section" id="episodes">
       <div className="episodes-header">
-        <h2 className="episodes-title font-sans">EPISODE GUIDE: THE RESILIENT LIFESTYLE</h2>
+        <h2 className="episodes-title">EPISODE GUIDE: THE RESILIENT LIFESTYLE</h2>
         <span className="episodes-season">SEASON 22 (UHD)</span>
       </div>
 
-      <div className="episodes-list">
+      <div className="episodes-list font-sans">
         {EPISODES.map((ep, i) => (
           <motion.div 
             key={i} 
@@ -491,7 +492,7 @@ function EpisodesList() {
             whileHover={{ scale: 1.01, translateY: -4 }}
             transition={{ type: 'spring', stiffness: 200, damping: 20 }}
           >
-            <div className="episode-number">{ep.number}</div>
+            <div className="episode-number font-display">{ep.number}</div>
             
             <div className="episode-thumb-container">
               <img src={ep.url} alt={ep.title} className="episode-thumb" />
@@ -499,10 +500,10 @@ function EpisodesList() {
 
             <div className="episode-details">
               <div className="episode-title-row">
-                <h3 className="episode-item-title uppercase tracking-wider text-red-500 font-bold">{ep.title}</h3>
-                <span className="episode-duration text-amber-400 font-semibold">{ep.duration}</span>
+                <h3 className="episode-item-title uppercase tracking-wider text-red-500 font-display text-xl">{ep.title}</h3>
+                <span className="episode-duration text-amber-400 font-semibold font-sans">{ep.duration}</span>
               </div>
-              <p className="episode-desc leading-relaxed font-sans">{ep.desc}</p>
+              <p className="episode-desc leading-relaxed font-sans mt-2">{ep.desc}</p>
             </div>
           </motion.div>
         ))}
@@ -531,12 +532,11 @@ function WishAnimationCanvas({ state, onAnimationComplete }: WishAnimationCanvas
     let width = (canvas.width = window.innerWidth)
     let height = (canvas.height = window.innerHeight)
 
-    // Comet variables
     let comet = {
       x: width / 2,
       y: height / 2 + 50,
-      targetX: width - 200,
-      targetY: 150,
+      targetX: width - 240,
+      targetY: 160,
       speed: 0.05,
       active: state === 'shooting'
     }
@@ -563,7 +563,6 @@ function WishAnimationCanvas({ state, onAnimationComplete }: WishAnimationCanvas
       twinkleSpeed: number
     }> = []
 
-    // Precalculate perfect sparkling heart constellation points in top right
     const centerX = width > 768 ? width - 240 : width / 2
     const centerY = width > 768 ? 160 : 120
     const pointsCount = 42
@@ -601,7 +600,6 @@ function WishAnimationCanvas({ state, onAnimationComplete }: WishAnimationCanvas
     const tick = () => {
       ctx.clearRect(0, 0, width, height)
 
-      // 1. Trail Particles physics
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i]
         p.x += p.vx
@@ -624,14 +622,12 @@ function WishAnimationCanvas({ state, onAnimationComplete }: WishAnimationCanvas
         ctx.restore()
       }
 
-      // 2. Comet Shooting Physics
       if (comet.active) {
         const dx = comet.targetX - comet.x
         const dy = comet.targetY - comet.y
         comet.x += dx * comet.speed
         comet.y += dy * comet.speed
 
-        // Trail emission
         for (let k = 0; k < 8; k++) {
           particles.push({
             x: comet.x,
@@ -649,7 +645,6 @@ function WishAnimationCanvas({ state, onAnimationComplete }: WishAnimationCanvas
         const dist = Math.sqrt(dx * dx + dy * dy)
         if (dist < 8) {
           comet.active = false
-          // Blast explosion
           for (let m = 0; m < 90; m++) {
             const angle = Math.random() * Math.PI * 2
             const velocity = Math.random() * 6 + 2
@@ -665,12 +660,10 @@ function WishAnimationCanvas({ state, onAnimationComplete }: WishAnimationCanvas
               sparkle: true
             })
           }
-          // Shift phase
           onAnimationComplete()
         }
       }
 
-      // 3. Draw Sparkling Constellation Stars
       if (state === 'constellation') {
         constellationStars.forEach(s => {
           const dx = s.targetX - s.x
@@ -691,7 +684,6 @@ function WishAnimationCanvas({ state, onAnimationComplete }: WishAnimationCanvas
           ctx.fillStyle = '#FFF'
           ctx.beginPath()
 
-          // Draw 4 pointed vector stars
           ctx.moveTo(s.x, s.y - s.size - sizeMod)
           ctx.lineTo(s.x + s.size / 2, s.y - s.size / 2)
           ctx.lineTo(s.x + s.size + sizeMod, s.y)
@@ -743,7 +735,6 @@ interface Ember {
   color: string
 }
 
-/* ──────────────  INTERACTIVE CAKE WITH FULL ANIMATION STATES  ────────────── */
 function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
   const [candlesBlown, setCandlesBlown] = useState([false, false, false])
   const [wishState, setWishState] = useState<'idle' | 'pop' | 'shooting' | 'constellation' | 'done'>('idle')
@@ -764,11 +755,9 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
     const candleX = 160 + index * 40
     const flameY = 65
 
-    // Smoke effect
     const newSmoke = { id: smokeId.current++, x: candleX, y: flameY }
     setSmokeRings(prev => [...prev, newSmoke])
 
-    // Embers/Sparks particles
     const sparkCount = 8
     const newSparks: Ember[] = []
     const sparkColors = ['#FFD700', '#FF4500', '#FF1493', '#FFF']
@@ -822,8 +811,6 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
   const handleWishSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!wishText.trim()) return
-    
-    // Collapse scroll modal & trigger diagonal shooting star
     setWishState('shooting')
   }
 
@@ -835,7 +822,6 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
         <p className="section-subtitle text-neutral-400 mt-2 tracking-wider font-sans">Tap each candle flame to extinguish it, popping open a cosmic scroll that shoots your wish to the sky!</p>
       </div>
 
-      {/* Immersive Canvas Shooting Star Overlay */}
       <WishAnimationCanvas 
         state={wishState} 
         onAnimationComplete={() => {
@@ -849,7 +835,6 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
       />
 
       <div className="cake-container glass-panel relative overflow-hidden mx-auto border border-neutral-800 rounded-2xl max-w-lg bg-neutral-950/80 p-8 shadow-2xl">
-        {/* Smoke overlay */}
         {smokeRings.map(smoke => (
           <div
             key={smoke.id}
@@ -863,7 +848,6 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
           </div>
         ))}
 
-        {/* Embers overlay */}
         {embers.map(emb => (
           <div
             key={emb.id}
@@ -953,11 +937,11 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
 
         <div className="cake-instruction text-center mt-6">
           {candlesBlown.every(c => c) ? (
-            <span className="text-amber-400 font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 animate-pulse">
+            <span className="text-amber-400 font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2">
               ✨ WISH TRANSFERRED TO THE HEART CONSTELLATION! ✨
             </span>
           ) : (
-            <div className="flex items-center justify-center gap-2 text-neutral-400 uppercase tracking-widest text-xs font-bold">
+            <div className="flex items-center justify-center gap-2 text-neutral-400 uppercase tracking-widest text-xs font-bold font-sans">
               <Star size={16} className="animate-spin text-amber-400" />
               <span>Tap each candle flame to extinguish it</span>
             </div>
@@ -982,7 +966,6 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
               className="lightbox-content relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 p-10 max-w-md w-full shadow-2xl text-center"
               onClick={e => e.stopPropagation()}
             >
-              {/* Spinning celestial core */}
               <div className="absolute inset-0 z-0 opacity-25 pointer-events-none rotating-space-portal" />
 
               <div className="relative z-10">
@@ -1055,8 +1038,8 @@ function Footer({ name }: { name: string }) {
           </motion.span>
         ))}
       </div>
-      <p className="footer-text uppercase tracking-widest">MADE WITH LOVE FOR {name}</p>
-      <p className="footer-sub uppercase tracking-wider">HAVE A TRULY MAGNIFICENT BIRTHDAY CELEBRATION!</p>
+      <p className="footer-text uppercase tracking-widest font-display text-2xl">CONSTANT CRITICISM & ZERO Hallmark POETRY FOR {name}</p>
+      <p className="footer-sub uppercase tracking-wider font-sans text-xs mt-2 text-neutral-500">ANOTHER YEAR CLOSER TO PENSION. HAVE A DYNAMIC CELEBRATION!</p>
     </footer>
   )
 }
@@ -1067,7 +1050,6 @@ export default function App() {
   const [currentTrack, setCurrentTrack] = useState<'bday' | 'japanese'>('bday')
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  // Sequential audio player
   useEffect(() => {
     const audio = new Audio(currentTrack === 'bday' ? BDAY_SONG : JAPANESE_SONG)
     audio.loop = currentTrack === 'japanese'
@@ -1091,7 +1073,6 @@ export default function App() {
     }
   }, [currentTrack])
 
-  // Click anywhere to start playing autoplay tracks
   useEffect(() => {
     const playOnInteraction = () => {
       if (audioRef.current && !playing) {
@@ -1125,7 +1106,6 @@ export default function App() {
     }
   }
 
-  // Initial confetti burst
   useEffect(() => {
     const timer = setTimeout(launchConfetti, 850)
     return () => clearTimeout(timer)
@@ -1133,13 +1113,9 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* High performance Canvas Cursor Trails */}
       <StardustCursorTrail />
-
-      {/* Cosmic background canvas */}
       <CosmicStarfield />
 
-      {/* Dynamic Header */}
       <header className="netflix-header">
         <div className="netflix-logo">{NAME}<span>FLIX</span></div>
         <div style={{ display: 'flex', gap: '1.25rem', fontSize: '0.9rem', fontWeight: 700 }} className="uppercase tracking-widest">
@@ -1149,16 +1125,13 @@ export default function App() {
         </div>
       </header>
 
-      {/* Mini Music player widget */}
       <VinylPlayer playing={playing} togglePlayback={togglePlayback} currentTrack={currentTrack} />
 
-      {/* Floating shapes */}
       <FloatingShape emoji="🎈" style={{ top: '15%', left: '3%' }} animation="float 6s ease-in-out infinite" />
       <FloatingShape emoji="✨" style={{ top: '25%', right: '5%' }} animation="float-reverse 5s ease-in-out infinite" />
       <FloatingShape emoji="🌸" style={{ top: '70%', left: '2%' }} animation="float 7s ease-in-out infinite 1s" />
       <FloatingShape emoji="💫" style={{ top: '88%', left: '5%' }} animation="float 6s ease-in-out infinite 2s" />
 
-      {/* Main Netflix layout */}
       <HeroBanner name={NAME} date={DATE} age={AGE} onPlayClick={() => {
         const el = document.getElementById('reels')
         if (el) el.scrollIntoView({ behavior: 'smooth' })
@@ -1168,12 +1141,10 @@ export default function App() {
       <VideosRow />
       <EpisodesList />
       
-      {/* Immersive interactive cake */}
       <InteractiveCake onWishRevealed={launchConfetti} />
 
       <Footer name={NAME} />
 
-      {/* Magic burst button */}
       <motion.button
         className="confetti-btn"
         onClick={launchConfetti}
