@@ -956,26 +956,26 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="lightbox-backdrop z-[9999]"
+            className="wish-modal-backdrop"
           >
             <motion.div
               initial={{ scale: 0.85, y: 50, rotateX: 45 }}
               animate={{ scale: 1, y: 0, rotateX: 0 }}
               exit={{ scale: 0, y: -100, rotateY: 90 }}
               transition={{ type: 'spring', stiffness: 180, damping: 18 }}
-              className="lightbox-content relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 p-10 max-w-md w-full shadow-2xl text-center"
+              className="wish-modal-content"
               onClick={e => e.stopPropagation()}
             >
               <div className="absolute inset-0 z-0 opacity-25 pointer-events-none rotating-space-portal" />
 
               <div className="relative z-10">
                 <Sparkles size={36} className="mx-auto text-amber-300 animate-pulse mb-3" />
-                <h3 className="section-title text-2xl font-extrabold uppercase tracking-widest text-amber-300">✨ THE CELESTIAL SCROLL ✨</h3>
-                <p className="text-xs text-neutral-400 font-sans tracking-wide mt-2 mb-6">Write a dream onto this scroll. When submitted, the letter will fold into a comet and shoot into the sky!</p>
+                <h3 className="wish-modal-title">✨ THE CELESTIAL SCROLL ✨</h3>
+                <p className="wish-modal-desc font-sans">Write a dream onto this scroll. When submitted, the letter will fold into a comet and shoot into the sky!</p>
                 
-                <form onSubmit={handleWishSubmit}>
+                <form onSubmit={handleWishSubmit} className="wish-form">
                   <textarea
-                    className="form-textarea w-full h-32 mb-6 rounded-lg bg-neutral-900 border border-neutral-700 text-white p-4 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 font-sans"
+                    className="wish-textarea"
                     placeholder="I wish for a year filled with..."
                     value={wishText}
                     onChange={e => setWishText(e.target.value)}
@@ -983,8 +983,7 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
                   />
                   <button
                     type="submit"
-                    className="confetti-btn relative inline-flex mx-auto uppercase tracking-widest border border-amber-500/20 bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 shadow-[0_4px_15px_rgba(245,158,11,0.25)]"
-                    style={{ position: 'static' }}
+                    className="wish-submit-btn"
                   >
                     RELEASE TO THE GALAXY ☄️
                   </button>
