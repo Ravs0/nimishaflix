@@ -13,14 +13,12 @@ YOUR JOURNEY HAS BEEN A BEAUTIFUL TESTAMENT TO RESILIENCE AND GRACE.
 
 MAY THIS SEASON BRING YOU GLOWING SUCCESS, ENDLESS ADVENTURES, AND THE FULFILLMENT OF YOUR DEAREST DREAMS.`
 
-// Beautiful uploaded photos
 const PHOTOS = [
   { url: '/photo1.jpg', title: 'THE THANOS INITIATIVE 👑', rating: '99% MATCH' },
   { url: '/photo2.jpg', title: 'PEACE & PASTA ALLIANCE 🍜', rating: '98% MATCH' },
   { url: '/photo3.jpg', title: 'THE EXCLUSIVE SCREENING 🎬', rating: '97% MATCH' }
 ]
 
-// Beautiful copied videos
 const VIDEOS = [
   { url: '/vid5.mp4', title: 'PASTRY MASSACRE 🍰', rating: '99% MATCH', description: 'THAT IS HOW I IMAGINE YOU CUTTING THE CAKE RN' },
   { url: '/vid1.mp4', title: 'UNCENSORED JOY 💖', rating: '99% MATCH' },
@@ -29,7 +27,6 @@ const VIDEOS = [
   { url: '/vid4.mp4', title: 'GOLDEN HOUR REELS 💫', rating: '97% MATCH' }
 ]
 
-// Netflix Styled Episodes mapped to her real journey and photos
 const EPISODES = [
   {
     number: 1,
@@ -55,8 +52,8 @@ const EPISODES = [
 ]
 
 /* ──────────────  AUDIO URLS  ────────────── */
-const BDAY_SONG = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' // Track 1
-const JAPANESE_SONG = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' // Track 2
+const BDAY_SONG = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'
+const JAPANESE_SONG = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
 
 /* ──────────────  UTILITIES  ────────────── */
 function launchConfetti() {
@@ -68,7 +65,7 @@ function launchConfetti() {
   setTimeout(() => confetti({ ...defaults, particleCount: 80, spread: 120, colors: ['#C084FC', '#FFF'] }), 400)
 }
 
-/* ──────────────  HIGH-PERFORMANCE STARDUST CURSOR TRAIL  ────────────── */
+/* ──────────────  STARDUST CURSOR TRAIL  ────────────── */
 function StardustCursorTrail() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -209,7 +206,7 @@ function FloatingNotesEmitter({ active }: { active: boolean }) {
   )
 }
 
-/* ──────────────  GLOWING COSMIC DUST BACKGROUND  ────────────── */
+/* ──────────────  COSMIC DUST BACKGROUND  ────────────── */
 function CosmicStarfield() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
@@ -395,7 +392,7 @@ function PhotosRow() {
               <div className="p-6 bg-neutral-950">
                 <h3 className="text-xl font-bold mb-1 text-red-500 tracking-wider uppercase">{selectedPhoto.title}</h3>
                 <p className="text-sm text-green-400 font-semibold mb-2">99% PERFECT SYNC • EXCLUSIVELY SHOT</p>
-                <p className="text-sm text-neutral-400">Frozen in pure cinematic high definition, celebrating an unbreakable milestone worth cherishing eternally.</p>
+                <p className="text-sm text-neutral-400">Frozen in pure cinematic high definition, celebrating an milestone worth cherishing eternally.</p>
               </div>
             </motion.div>
           </motion.div>
@@ -514,12 +511,221 @@ function EpisodesList() {
   )
 }
 
-interface StarParticle {
-  id: number
-  x: number
-  delay: string
-  drift: string
-  scale: number
+/* ──────────────  IMMERSIVE WISH CANVAS ANIMATION  ────────────── */
+interface WishAnimationCanvasProps {
+  state: 'idle' | 'pop' | 'shooting' | 'constellation' | 'done'
+  onAnimationComplete: () => void
+}
+
+function WishAnimationCanvas({ state, onAnimationComplete }: WishAnimationCanvasProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const animationRef = useRef<number>()
+
+  useEffect(() => {
+    if (state !== 'shooting' && state !== 'constellation') return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let width = (canvas.width = window.innerWidth)
+    let height = (canvas.height = window.innerHeight)
+
+    // Comet variables
+    let comet = {
+      x: width / 2,
+      y: height / 2 + 50,
+      targetX: width - 200,
+      targetY: 150,
+      speed: 0.05,
+      active: state === 'shooting'
+    }
+
+    const particles: Array<{
+      x: number
+      y: number
+      vx: number
+      vy: number
+      size: number
+      color: string
+      alpha: number
+      decay: number
+      sparkle?: boolean
+    }> = []
+
+    const constellationStars: Array<{
+      x: number
+      y: number
+      targetX: number
+      targetY: number
+      size: number
+      alpha: number
+      twinkleSpeed: number
+    }> = []
+
+    // Precalculate perfect sparkling heart constellation points in top right
+    const centerX = width > 768 ? width - 240 : width / 2
+    const centerY = width > 768 ? 160 : 120
+    const pointsCount = 42
+    for (let i = 0; i < pointsCount; i++) {
+      const t = (i / pointsCount) * Math.PI * 2
+      const rX = 16 * Math.pow(Math.sin(t), 3)
+      const rY = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t))
+      const scale = width > 768 ? 6.5 : 4.5
+      
+      const targetX = centerX + rX * scale
+      const targetY = centerY + rY * scale
+
+      const startX = width / 2
+      const startY = height / 2 + 50
+
+      const constellationStar = {
+        x: startX,
+        y: startY,
+        targetX,
+        targetY,
+        size: Math.random() * 2.5 + 1.5,
+        alpha: 0,
+        twinkleSpeed: Math.random() * 0.04 + 0.02
+      }
+      constellationStars.push(constellationStar)
+    }
+
+    const handleResize = () => {
+      if (!canvas) return
+      width = canvas.width = window.innerWidth
+      height = canvas.height = window.innerHeight
+    }
+    window.addEventListener('resize', handleResize)
+
+    const tick = () => {
+      ctx.clearRect(0, 0, width, height)
+
+      // 1. Trail Particles physics
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i]
+        p.x += p.vx
+        p.y += p.vy
+        p.alpha -= p.decay
+        
+        if (p.alpha <= 0) {
+          particles.splice(i, 1)
+          continue
+        }
+
+        ctx.save()
+        ctx.globalAlpha = p.alpha
+        ctx.shadowBlur = p.sparkle ? 12 : 5
+        ctx.shadowColor = p.color
+        ctx.fillStyle = p.color
+        ctx.beginPath()
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.restore()
+      }
+
+      // 2. Comet Shooting Physics
+      if (comet.active) {
+        const dx = comet.targetX - comet.x
+        const dy = comet.targetY - comet.y
+        comet.x += dx * comet.speed
+        comet.y += dy * comet.speed
+
+        // Trail emission
+        for (let k = 0; k < 8; k++) {
+          particles.push({
+            x: comet.x,
+            y: comet.y,
+            vx: (Math.random() - 0.5) * 4 - (dx * 0.015),
+            vy: (Math.random() - 0.5) * 4 - (dy * 0.015),
+            size: Math.random() * 5 + 1.5,
+            color: ['#FFF', '#FFD700', '#FF4500', '#C084FC'][Math.floor(Math.random() * 4)],
+            alpha: 1.0,
+            decay: Math.random() * 0.035 + 0.015,
+            sparkle: Math.random() > 0.4
+          })
+        }
+
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        if (dist < 8) {
+          comet.active = false
+          // Blast explosion
+          for (let m = 0; m < 90; m++) {
+            const angle = Math.random() * Math.PI * 2
+            const velocity = Math.random() * 6 + 2
+            particles.push({
+              x: comet.targetX,
+              y: comet.targetY,
+              vx: Math.cos(angle) * velocity,
+              vy: Math.sin(angle) * velocity,
+              size: Math.random() * 3.5 + 1.2,
+              color: ['#FFD700', '#FF1493', '#FFF', '#C084FC'][Math.floor(Math.random() * 4)],
+              alpha: 1.0,
+              decay: Math.random() * 0.02 + 0.01,
+              sparkle: true
+            })
+          }
+          // Shift phase
+          onAnimationComplete()
+        }
+      }
+
+      // 3. Draw Sparkling Constellation Stars
+      if (state === 'constellation') {
+        constellationStars.forEach(s => {
+          const dx = s.targetX - s.x
+          const dy = s.targetY - s.y
+          s.x += dx * 0.08
+          s.y += dy * 0.08
+
+          if (s.alpha < 1) {
+            s.alpha += 0.025
+          }
+
+          const sizeMod = Math.abs(Math.sin(Date.now() * s.twinkleSpeed)) * 1.5
+
+          ctx.save()
+          ctx.globalAlpha = s.alpha
+          ctx.shadowBlur = 10
+          ctx.shadowColor = '#FFD700'
+          ctx.fillStyle = '#FFF'
+          ctx.beginPath()
+
+          // Draw 4 pointed vector stars
+          ctx.moveTo(s.x, s.y - s.size - sizeMod)
+          ctx.lineTo(s.x + s.size / 2, s.y - s.size / 2)
+          ctx.lineTo(s.x + s.size + sizeMod, s.y)
+          ctx.lineTo(s.x + s.size / 2, s.y + s.size / 2)
+          ctx.lineTo(s.x, s.y + s.size + sizeMod)
+          ctx.lineTo(s.x - s.size / 2, s.y + s.size / 2)
+          ctx.lineTo(s.x - s.size - sizeMod, s.y)
+          ctx.lineTo(s.x - s.size / 2, s.y - s.size / 2)
+          ctx.closePath()
+          ctx.fill()
+          ctx.restore()
+        })
+      }
+
+      animationRef.current = requestAnimationFrame(tick)
+    }
+
+    tick()
+
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [state])
+
+  if (state !== 'shooting' && state !== 'constellation') return null
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none w-full h-full"
+      style={{ zIndex: 100000 }}
+    />
+  )
 }
 
 interface SmokeRing {
@@ -537,17 +743,15 @@ interface Ember {
   color: string
 }
 
+/* ──────────────  INTERACTIVE CAKE WITH FULL ANIMATION STATES  ────────────── */
 function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
   const [candlesBlown, setCandlesBlown] = useState([false, false, false])
-  const [wishOpened, setWishOpened] = useState(false)
+  const [wishState, setWishState] = useState<'idle' | 'pop' | 'shooting' | 'constellation' | 'done'>('idle')
   const [wishText, setWishText] = useState('')
-  const [risingStars, setRisingStars] = useState<StarParticle[]>([])
   
-  // Real smoke & ember particle lists
   const [smokeRings, setSmokeRings] = useState<SmokeRing[]>([])
   const [embers, setEmbers] = useState<Ember[]>([])
   
-  const starId = useRef(0)
   const smokeId = useRef(0)
   const emberId = useRef(0)
 
@@ -557,15 +761,14 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
     newBlown[index] = true
     setCandlesBlown(newBlown)
 
-    // Flame position mapping coordinates based on SVG
     const candleX = 160 + index * 40
     const flameY = 65
 
-    // 1. Emit realistic grey-white smoke ring
+    // Smoke effect
     const newSmoke = { id: smokeId.current++, x: candleX, y: flameY }
     setSmokeRings(prev => [...prev, newSmoke])
 
-    // 2. Emit hot embers/sparks
+    // Embers/Sparks particles
     const sparkCount = 8
     const newSparks: Ember[] = []
     const sparkColors = ['#FFD700', '#FF4500', '#FF1493', '#FFF']
@@ -582,7 +785,6 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
     }
     setEmbers(prev => [...prev, ...newSparks])
 
-    // Clean up smoke and sparks after animation finishes
     setTimeout(() => {
       setSmokeRings(prev => prev.filter(s => s.id !== newSmoke.id))
     }, 1500)
@@ -595,12 +797,11 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
 
     if (newBlown.every(c => c)) {
       setTimeout(() => {
-        setWishOpened(true)
+        setWishState('pop')
       }, 700)
     }
   }
 
-  // Update embers gravity and motion
   useEffect(() => {
     if (embers.length === 0) return
     const interval = setInterval(() => {
@@ -610,9 +811,9 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
             ...e,
             x: e.x + e.vx,
             y: e.y + e.vy,
-            vy: e.vy + 0.15 // gravity
+            vy: e.vy + 0.15
           }))
-          .filter(e => e.y < 300) // bounds check
+          .filter(e => e.y < 300)
       )
     }, 30)
     return () => clearInterval(interval)
@@ -621,59 +822,34 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
   const handleWishSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!wishText.trim()) return
-    setWishOpened(false)
     
-    // Generate beautiful rising vector stars
-    const starsList: StarParticle[] = []
-    for (let i = 0; i < 45; i++) {
-      starsList.push({
-        id: starId.current++,
-        x: 40 + Math.random() * 320,
-        delay: `${Math.random() * 1.5}s`,
-        drift: `${-150 + Math.random() * 300}px`,
-        scale: Math.random() * 0.8 + 0.5
-      })
-    }
-    setRisingStars(starsList)
-    
-    launchConfetti()
-    onWishRevealed()
-
-    setTimeout(() => {
-      setRisingStars([])
-    }, 4500)
+    // Collapse scroll modal & trigger diagonal shooting star
+    setWishState('shooting')
   }
 
   return (
-    <section className="section cake-section py-16">
+    <section className="section cake-section py-16" id="wish">
       <div className="section-header text-center mb-8">
         <Sparkles size={28} className="inline text-red-500 animate-pulse mr-2" />
-        <h2 className="section-title text-3xl font-extrabold tracking-widest text-white uppercase inline-block">MAKE A CELÈSTIAL WISH</h2>
-        <p className="section-subtitle text-neutral-400 mt-2 tracking-wider font-sans">Tap each glowing candle flame to blow it out and launch your wish into the stardust canopy!</p>
+        <h2 className="section-title text-3xl font-extrabold tracking-widest text-white uppercase inline-block">MAKE A CELESTIAL WISH</h2>
+        <p className="section-subtitle text-neutral-400 mt-2 tracking-wider font-sans">Tap each candle flame to extinguish it, popping open a cosmic scroll that shoots your wish to the sky!</p>
       </div>
 
-      <div className="cake-container glass-panel relative overflow-hidden mx-auto border border-neutral-800 rounded-2xl max-w-lg bg-neutral-950/80 p-8 shadow-2xl">
-        {/* Glowing Vector Rising Stars */}
-        {risingStars.map(star => (
-          <span
-            key={star.id}
-            className="star-particle-gold"
-            style={{
-              left: `${star.x}px`,
-              bottom: '50px',
-              animationDelay: star.delay,
-              // @ts-ignore
-              '--drift': star.drift,
-              transform: `scale(${star.scale})`
-            }}
-          >
-            <svg viewBox="0 0 24 24" width="22" height="22" className="star-svg-glow fill-amber-300">
-              <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-            </svg>
-          </span>
-        ))}
+      {/* Immersive Canvas Shooting Star Overlay */}
+      <WishAnimationCanvas 
+        state={wishState} 
+        onAnimationComplete={() => {
+          setWishState('constellation')
+          launchConfetti()
+          onWishRevealed()
+          setTimeout(() => {
+            setWishState('done')
+          }, 3500)
+        }}
+      />
 
-        {/* Smoke Emitter Overlay */}
+      <div className="cake-container glass-panel relative overflow-hidden mx-auto border border-neutral-800 rounded-2xl max-w-lg bg-neutral-950/80 p-8 shadow-2xl">
+        {/* Smoke overlay */}
         {smokeRings.map(smoke => (
           <div
             key={smoke.id}
@@ -687,7 +863,7 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
           </div>
         ))}
 
-        {/* Embers/Sparks Emitter Overlay */}
+        {/* Embers overlay */}
         {embers.map(emb => (
           <div
             key={emb.id}
@@ -703,33 +879,24 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
 
         <div className="cake-box flex justify-center items-center">
           <svg viewBox="0 0 400 300" width="100%" height="240">
-            {/* Elegant Background Glow */}
             <circle cx="200" cy="180" r="110" fill="radial-gradient(circle, rgba(229,9,20,0.15) 0%, transparent 70%)" opacity="0.6" />
 
-            {/* Premium Gold Stand */}
             <path d="M 100 240 L 300 240 L 280 260 L 120 260 Z" fill="url(#goldGrad)" className="filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
             <rect x="180" y="240" width="40" height="20" fill="url(#goldGrad)" />
             <ellipse cx="200" cy="240" rx="100" ry="10" fill="url(#goldGrad)" />
 
-            {/* Red Velvet Base Layer with elegant 3D Gradients */}
             <rect x="120" y="165" width="160" height="75" rx="8" fill="url(#cakeRedGrad)" className="filter drop-shadow-md" />
             <ellipse cx="200" cy="165" rx="80" ry="10" fill="#E50914" opacity="0.8" />
-            {/* Cream Piping Swirls Base */}
             <path d="M 120 230 C 130 240, 140 230, 150 240 C 160 230, 170 240, 180 230 C 190 240, 200 230, 210 240 C 220 230, 230 240, 240 230 C 250 240, 260 230, 270 240 C 280 230, 290 240, 280 230" fill="none" stroke="#FFF" strokeWidth="4" strokeLinecap="round" opacity="0.9" />
 
-            {/* Top Tier: Rose Gold & White Cream */}
             <rect x="142" y="105" width="116" height="60" rx="8" fill="url(#cakeRoseGrad)" />
             <ellipse cx="200" cy="105" rx="58" ry="8" fill="#FFF" opacity="0.9" />
-
-            {/* Premium White Frosting Drips */}
             <path d="M 142 105 Q 152 125 162 105 Q 172 125 182 105 Q 192 125 202 105 Q 212 125 222 105 Q 232 125 242 105 Q 252 125 258 105 L 258 112 L 142 112 Z" fill="#FFF" opacity="0.95" />
 
-            {/* Candles & Flickering Flames */}
             {[0, 1, 2].map(i => {
               const xPos = 160 + i * 40
               return (
                 <g key={i} className="candle cursor-pointer group" onClick={() => handleCandleClick(i)}>
-                  {/* Glowing wax drip lines */}
                   <rect x={xPos - 4} y="72" width="8" height="36" fill={i === 0 ? 'url(#candlePurple)' : i === 1 ? 'url(#candleAmber)' : 'url(#candleBlue)'} rx="2" className="transition-all duration-300 group-hover:brightness-125" />
                   <line x1={xPos} y1="72" x2={xPos} y2="65" stroke="#222" strokeWidth="2.5" />
                   {!candlesBlown[i] && (
@@ -747,7 +914,6 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
               )
             })}
 
-            {/* GRADIENT DEFINITIONS */}
             <defs>
               <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stopColor="#FFF0D4" />
@@ -787,8 +953,8 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
 
         <div className="cake-instruction text-center mt-6">
           {candlesBlown.every(c => c) ? (
-            <span className="text-amber-400 font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 animate-bounce">
-              ✨ THE WISH HAS FLOWN INTO THE GALACTIC SPACE! ✨
+            <span className="text-amber-400 font-bold uppercase tracking-widest text-sm flex items-center justify-center gap-2 animate-pulse">
+              ✨ WISH TRANSFERRED TO THE HEART CONSTELLATION! ✨
             </span>
           ) : (
             <div className="flex items-center justify-center gap-2 text-neutral-400 uppercase tracking-widest text-xs font-bold">
@@ -799,29 +965,30 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
         </div>
       </div>
 
-      {/* Wish Form Modal (Nebula Portal Redesign) */}
+      {/* Floating Parchment Wish Modal */}
       <AnimatePresence>
-        {wishOpened && (
+        {wishState === 'pop' && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="lightbox-backdrop z-[999]"
+            className="lightbox-backdrop z-[9999]"
           >
             <motion.div
-              initial={{ scale: 0.85, y: 30 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.85, y: 30 }}
+              initial={{ scale: 0.85, y: 50, rotateX: 45 }}
+              animate={{ scale: 1, y: 0, rotateX: 0 }}
+              exit={{ scale: 0, y: -100, rotateY: 90 }}
+              transition={{ type: 'spring', stiffness: 180, damping: 18 }}
               className="lightbox-content relative overflow-hidden rounded-2xl border border-neutral-800 bg-neutral-950 p-10 max-w-md w-full shadow-2xl text-center"
               onClick={e => e.stopPropagation()}
             >
-              {/* Spinning Space Nebula Core Background */}
-              <div className="absolute inset-0 z-0 opacity-20 pointer-events-none rotating-space-portal" />
+              {/* Spinning celestial core */}
+              <div className="absolute inset-0 z-0 opacity-25 pointer-events-none rotating-space-portal" />
 
               <div className="relative z-10">
                 <Sparkles size={36} className="mx-auto text-amber-300 animate-pulse mb-3" />
-                <h3 className="section-title text-2xl font-extrabold uppercase tracking-widest text-amber-300">✨ THE CELESTIAL PORTAL ✨</h3>
-                <p className="text-xs text-neutral-400 font-sans tracking-wide mt-2 mb-6">Your candles are extinguished. Type a secret dream below, and it will be sent straight to the stars.</p>
+                <h3 className="section-title text-2xl font-extrabold uppercase tracking-widest text-amber-300">✨ THE CELESTIAL SCROLL ✨</h3>
+                <p className="text-xs text-neutral-400 font-sans tracking-wide mt-2 mb-6">Write a dream onto this scroll. When submitted, the letter will fold into a comet and shoot into the sky!</p>
                 
                 <form onSubmit={handleWishSubmit}>
                   <textarea
@@ -836,7 +1003,7 @@ function InteractiveCake({ onWishRevealed }: { onWishRevealed: () => void }) {
                     className="confetti-btn relative inline-flex mx-auto uppercase tracking-widest border border-amber-500/20 bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 shadow-[0_4px_15px_rgba(245,158,11,0.25)]"
                     style={{ position: 'static' }}
                   >
-                    SEND TO THE COSMOS 💫
+                    RELEASE TO THE GALAXY ☄️
                   </button>
                 </form>
               </div>
@@ -900,7 +1067,7 @@ export default function App() {
   const [currentTrack, setCurrentTrack] = useState<'bday' | 'japanese'>('bday')
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  // Sequential Multi-track autoplay & play transition logic
+  // Sequential audio player
   useEffect(() => {
     const audio = new Audio(currentTrack === 'bday' ? BDAY_SONG : JAPANESE_SONG)
     audio.loop = currentTrack === 'japanese'
@@ -924,7 +1091,7 @@ export default function App() {
     }
   }, [currentTrack])
 
-  // Screen interaction trigger to start audio
+  // Click anywhere to start playing autoplay tracks
   useEffect(() => {
     const playOnInteraction = () => {
       if (audioRef.current && !playing) {
@@ -958,7 +1125,7 @@ export default function App() {
     }
   }
 
-  // Launch initial confetti burst on load
+  // Initial confetti burst
   useEffect(() => {
     const timer = setTimeout(launchConfetti, 850)
     return () => clearTimeout(timer)
@@ -966,10 +1133,10 @@ export default function App() {
 
   return (
     <div className="app">
-      {/* High performance Canvas Trails */}
+      {/* High performance Canvas Cursor Trails */}
       <StardustCursorTrail />
 
-      {/* Custom Particle Cosmic Background */}
+      {/* Cosmic background canvas */}
       <CosmicStarfield />
 
       {/* Dynamic Header */}
@@ -985,33 +1152,28 @@ export default function App() {
       {/* Mini Music player widget */}
       <VinylPlayer playing={playing} togglePlayback={togglePlayback} currentTrack={currentTrack} />
 
-      {/* Floating dynamic design elements */}
+      {/* Floating shapes */}
       <FloatingShape emoji="🎈" style={{ top: '15%', left: '3%' }} animation="float 6s ease-in-out infinite" />
       <FloatingShape emoji="✨" style={{ top: '25%', right: '5%' }} animation="float-reverse 5s ease-in-out infinite" />
       <FloatingShape emoji="🌸" style={{ top: '70%', left: '2%' }} animation="float 7s ease-in-out infinite 1s" />
       <FloatingShape emoji="💫" style={{ top: '88%', left: '5%' }} animation="float 6s ease-in-out infinite 2s" />
 
-      {/* Main Netflix-style Sections */}
+      {/* Main Netflix layout */}
       <HeroBanner name={NAME} date={DATE} age={AGE} onPlayClick={() => {
         const el = document.getElementById('reels')
         if (el) el.scrollIntoView({ behavior: 'smooth' })
       }} />
       
-      {/* Row 1: Photos */}
       <PhotosRow />
-
-      {/* Row 2: Videos */}
       <VideosRow />
-
-      {/* Episodes List (Tailored Milestones) */}
       <EpisodesList />
-
-      {/* Extinguish Candles Interaction */}
+      
+      {/* Immersive interactive cake */}
       <InteractiveCake onWishRevealed={launchConfetti} />
 
       <Footer name={NAME} />
 
-      {/* Re-launch confetti button */}
+      {/* Magic burst button */}
       <motion.button
         className="confetti-btn"
         onClick={launchConfetti}
