@@ -271,6 +271,7 @@ body {
   overflow-x: auto;
   padding: 0.5rem 4% 1.8rem;
   scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
 .row-container::-webkit-scrollbar {
@@ -844,42 +845,85 @@ body {
 .lightbox-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 99999;
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
 .lightbox-content {
-  background: #0d0d0d;
+  background: #0a0a0a;
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   max-width: 600px;
   width: 100%;
   overflow: hidden;
   position: relative;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.lightbox-media {
+  width: 100%;
+  max-height: 52vh;
+  object-fit: contain;
+  background: #000;
+  display: block;
+  box-sizing: border-box;
+}
+
+.lightbox-text-container {
+  padding: 1.5rem;
+  background: #0d0d0d;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
+}
+
+.lightbox-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--netflix-red);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.2rem;
+  line-height: 1;
+}
+
+.lightbox-match {
+  color: #46d369;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  font-family: var(--font-sans);
+}
+
+.lightbox-desc {
+  font-family: var(--font-sans);
+  color: #A3A3A3;
+  font-size: 0.9rem;
+  line-height: 1.55;
 }
 
 .lightbox-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.25);
   color: #FFF;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 10;
+  z-index: 100;
   transition: background 0.2s, transform 0.2s;
 }
 

@@ -139,15 +139,11 @@ function StardustCursorTrail() {
           continue
         }
 
-        ctx.save()
         ctx.globalAlpha = p.alpha
-        ctx.shadowBlur = 6
-        ctx.shadowColor = p.color
         ctx.fillStyle = p.color
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
         ctx.fill()
-        ctx.restore()
       }
       animationFrameId = requestAnimationFrame(draw)
     }
@@ -383,17 +379,17 @@ function PhotosRow() {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="lightbox-content relative max-w-lg overflow-hidden rounded-xl border border-neutral-800"
+              className="lightbox-content"
               onClick={e => e.stopPropagation()}
             >
               <button className="lightbox-close" onClick={() => setSelectedPhoto(null)}>
                 <X size={20} />
               </button>
-              <img src={selectedPhoto.url} alt={selectedPhoto.title} className="w-full h-auto max-h-[75vh] object-contain" />
-              <div className="p-6 bg-neutral-950">
-                <h3 className="text-xl font-bold mb-1 text-red-500 tracking-wider uppercase">{selectedPhoto.title}</h3>
-                <p className="text-sm text-green-400 font-semibold mb-2">99% PERFECT SYNC • EXCLUSIVELY SHOT</p>
-                <p className="text-sm text-neutral-400">Frozen in pure cinematic high definition, celebrating a milestone worth cherishing eternally.</p>
+              <img src={selectedPhoto.url} alt={selectedPhoto.title} className="lightbox-media" />
+              <div className="lightbox-text-container">
+                <h3 className="lightbox-title uppercase">{selectedPhoto.title}</h3>
+                <p className="lightbox-match">99% PERFECT SYNC • EXCLUSIVELY SHOT</p>
+                <p className="lightbox-desc">Frozen in pure cinematic high definition, celebrating a milestone worth cherishing eternally.</p>
               </div>
             </motion.div>
           </motion.div>
@@ -456,17 +452,17 @@ function VideosRow() {
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              className="lightbox-content bg-neutral-950 rounded-xl overflow-hidden max-w-2xl w-full border border-neutral-800"
+              className="lightbox-content"
               onClick={e => e.stopPropagation()}
             >
               <button className="lightbox-close" onClick={() => setSelectedVideo(null)}>
                 <X size={20} />
               </button>
-              <video src={selectedVideo.url} controls autoPlay playsInline className="w-full max-h-[65vh] object-contain" />
-              <div className="p-6 bg-neutral-950">
-                <h3 className="text-xl font-bold mb-1 text-red-500 tracking-wider uppercase">{selectedVideo.title}</h3>
-                <p className="text-sm text-green-400 font-semibold mb-2">99% CRITICS MATCH • ORIGINAL DIRECT RECORDING</p>
-                <p className="text-sm text-neutral-300 tracking-wide font-sans">{selectedVideo.description || 'An organic slice of life capturing the absolute dynamic humor, resilience, and lightheartedness that you carry.'}</p>
+              <video src={selectedVideo.url} controls autoPlay playsInline className="lightbox-media" />
+              <div className="lightbox-text-container">
+                <h3 className="lightbox-title uppercase">{selectedVideo.title}</h3>
+                <p className="lightbox-match">99% CRITICS MATCH • ORIGINAL DIRECT RECORDING</p>
+                <p className="lightbox-desc font-sans">{selectedVideo.description || 'An organic slice of life capturing the absolute dynamic humor, resilience, and lightheartedness that you carry.'}</p>
               </div>
             </motion.div>
           </motion.div>
