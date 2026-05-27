@@ -52,9 +52,151 @@ const EPISODES = [
   }
 ]
 
-/* ──────────────  AUDIO URLS  ────────────── */
-const BDAY_SONG = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3'
-const JAPANESE_SONG = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+/* ──────────────  AUDIO SYNTHESIZER AND MELODIES  ────────────── */
+const NOTE_FREQS: Record<string, number> = {
+  C3: 130.81, 'C#3': 138.59, D3: 146.83, 'D#3': 155.56, E3: 164.81, F3: 174.61, 'F#3': 185.00, G3: 196.00, 'G#3': 207.65, A3: 220.00, 'A#3': 233.08, B3: 246.94,
+  C4: 261.63, 'C#4': 277.18, D4: 293.66, 'D#4': 311.13, E4: 329.63, F4: 349.23, 'F#4': 369.99, G4: 392.00, 'G#4': 415.30, A4: 440.00, 'A#4': 466.16, B4: 493.88,
+  C5: 523.25, 'C#5': 554.37, D5: 587.33, 'D#5': 622.25, E5: 659.25, F5: 698.46, 'F#5': 739.99, G5: 783.99, 'G#5': 830.61, A5: 880.00, B5: 987.77, REST: 0
+}
+
+const BDAY_MELODY = [
+  { note: 'C4', dur: 0.75 }, { note: 'C4', dur: 0.25 }, { note: 'D4', dur: 1.0 }, { note: 'C4', dur: 1.0 }, { note: 'F4', dur: 1.0 }, { note: 'E4', dur: 2.0 },
+  { note: 'C4', dur: 0.75 }, { note: 'C4', dur: 0.25 }, { note: 'D4', dur: 1.0 }, { note: 'C4', dur: 1.0 }, { note: 'G4', dur: 1.0 }, { note: 'F4', dur: 2.0 },
+  { note: 'C4', dur: 0.75 }, { note: 'C4', dur: 0.25 }, { note: 'C5', dur: 1.0 }, { note: 'A4', dur: 1.0 }, { note: 'F4', dur: 1.0 }, { note: 'E4', dur: 1.0 }, { note: 'D4', dur: 2.0 },
+  { note: 'A#4', dur: 0.75 }, { note: 'A#4', dur: 0.25 }, { note: 'A4', dur: 1.0 }, { note: 'F4', dur: 1.0 }, { note: 'G4', dur: 1.0 }, { note: 'F4', dur: 2.5 }
+]
+
+const AOI_MELODY = [
+  { note: 'G4', dur: 0.8 }, { note: 'C5', dur: 0.8 }, { note: 'E5', dur: 0.8 }, { note: 'D5', dur: 0.8 }, { note: 'C5', dur: 1.6 },
+  { note: 'A4', dur: 0.8 }, { note: 'C5', dur: 0.8 }, { note: 'D5', dur: 0.8 }, { note: 'E5', dur: 0.8 }, { note: 'D5', dur: 1.6 },
+  { note: 'G4', dur: 0.8 }, { note: 'C5', dur: 0.8 }, { note: 'E5', dur: 0.8 }, { note: 'D5', dur: 0.8 }, { note: 'C5', dur: 1.6 },
+  { note: 'A4', dur: 0.8 }, { note: 'D5', dur: 0.8 }, { note: 'C5', dur: 0.8 }, { note: 'B4', dur: 0.8 }, { note: 'C5', dur: 2.0 },
+  { note: 'E5', dur: 0.8 }, { note: 'D5', dur: 0.8 }, { note: 'C5', dur: 0.8 }, { note: 'D5', dur: 0.8 }, { note: 'E5', dur: 1.6 },
+  { note: 'G5', dur: 0.8 }, { note: 'E5', dur: 0.8 }, { note: 'D5', dur: 0.8 }, { note: 'C5', dur: 0.8 }, { note: 'D5', dur: 1.6 }
+]
+
+class ChiptunePlayer {
+  private ctx: AudioContext | null = null
+  private activeNodes: Array<{ osc: OscillatorNode; gain: GainNode }> = []
+  private timerId: any = null
+  private nextNoteTime = 0
+  private tempo = 135
+  private currentIndex = 0
+  private melody: Array<{ note: string; dur: number }> = []
+  private onTrackEndedCallback: (() => void) | null = null
+  private loopMelody = true
+
+  constructor() {}
+
+  public init() {
+    if (!this.ctx) {
+      this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
+    }
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume()
+    }
+  }
+
+  public start(melody: Array<{ note: string; dur: number }>, loop = true, tempo = 135, onEnded?: () => void) {
+    this.init()
+    this.stop()
+    this.melody = melody
+    this.loopMelody = loop
+    this.tempo = tempo
+    this.onTrackEndedCallback = onEnded || null
+    this.currentIndex = 0
+    this.nextNoteTime = this.ctx!.currentTime + 0.05
+
+    this.scheduler()
+  }
+
+  public stop() {
+    if (this.timerId) {
+      clearTimeout(this.timerId)
+      this.timerId = null
+    }
+    this.activeNodes.forEach(node => {
+      try {
+        node.osc.stop()
+        node.osc.disconnect()
+        node.gain.disconnect()
+      } catch (e) {}
+    })
+    this.activeNodes = []
+  }
+
+  private scheduler() {
+    if (!this.ctx) return
+    const lookahead = 0.2
+    while (this.nextNoteTime < this.ctx.currentTime + lookahead) {
+      this.scheduleNote(this.currentIndex, this.nextNoteTime)
+      this.advanceNote()
+    }
+    this.timerId = setTimeout(() => this.scheduler(), 50)
+  }
+
+  private scheduleNote(index: number, time: number) {
+    if (!this.ctx || !this.melody[index]) return
+    const step = this.melody[index]
+    const freq = NOTE_FREQS[step.note] || 0
+    const duration = step.dur * (60 / this.tempo)
+
+    if (freq > 0) {
+      const osc = this.ctx.createOscillator()
+      const gainNode = this.ctx.createGain()
+
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(freq, time)
+
+      const subOsc = this.ctx.createOscillator()
+      const subGain = this.ctx.createGain()
+      subOsc.type = 'triangle'
+      subOsc.frequency.setValueAtTime(freq / 2, time)
+
+      gainNode.gain.setValueAtTime(0, time)
+      gainNode.gain.linearRampToValueAtTime(0.18, time + 0.02)
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, time + duration - 0.02)
+
+      subGain.gain.setValueAtTime(0, time)
+      subGain.gain.linearRampToValueAtTime(0.06, time + 0.04)
+      subGain.gain.exponentialRampToValueAtTime(0.0001, time + duration - 0.02)
+
+      osc.connect(gainNode)
+      gainNode.connect(this.ctx.destination)
+
+      subOsc.connect(subGain)
+      subGain.connect(this.ctx.destination)
+
+      osc.start(time)
+      subOsc.start(time)
+
+      osc.stop(time + duration)
+      subOsc.stop(time + duration)
+
+      this.activeNodes.push({ osc, gain: gainNode })
+      this.activeNodes.push({ osc: subOsc, gain: subGain })
+    }
+  }
+
+  private advanceNote() {
+    const secondsPerBeat = 60 / this.tempo
+    this.nextNoteTime += this.melody[this.currentIndex].dur * secondsPerBeat
+
+    this.currentIndex++
+    if (this.currentIndex >= this.melody.length) {
+      if (this.loopMelody) {
+        this.currentIndex = 0
+      } else {
+        this.stop()
+        if (this.onTrackEndedCallback) {
+          this.onTrackEndedCallback()
+        }
+      }
+    }
+  }
+}
+
+const synthPlayer = new ChiptunePlayer()
 
 /* ──────────────  UTILITIES  ────────────── */
 function launchConfetti() {
@@ -1048,41 +1190,34 @@ function Footer({ name }: { name: string }) {
 export default function App() {
   const [playing, setPlaying] = useState(false)
   const [currentTrack, setCurrentTrack] = useState<'bday' | 'japanese'>('bday')
-  const audioRef = useRef<HTMLAudioElement | null>(null)
 
+  // Synthesizer playback reactive control
   useEffect(() => {
-    const audio = new Audio(currentTrack === 'bday' ? BDAY_SONG : JAPANESE_SONG)
-    audio.loop = currentTrack === 'japanese'
-    audioRef.current = audio
-
     if (playing) {
-      audio.play().catch(e => console.log('Autoplay blocked:', e))
-    }
-
-    const handleEnded = () => {
       if (currentTrack === 'bday') {
-        setCurrentTrack('japanese')
+        synthPlayer.start(BDAY_MELODY, false, 135, () => {
+          setCurrentTrack('japanese')
+        })
+      } else {
+        synthPlayer.start(AOI_MELODY, true, 140)
       }
+    } else {
+      synthPlayer.stop()
     }
-
-    audio.addEventListener('ended', handleEnded)
 
     return () => {
-      audio.pause()
-      audio.removeEventListener('ended', handleEnded)
+      synthPlayer.stop()
     }
-  }, [currentTrack])
+  }, [playing, currentTrack])
 
+  // Screen interaction trigger to resume/init audio context
   useEffect(() => {
     const playOnInteraction = () => {
-      if (audioRef.current && !playing) {
-        audioRef.current.play()
-          .then(() => {
-            setPlaying(true)
-            window.removeEventListener('click', playOnInteraction)
-            window.removeEventListener('touchstart', playOnInteraction)
-          })
-          .catch(e => console.log('Interaction play blocked:', e))
+      if (!playing) {
+        synthPlayer.init()
+        setPlaying(true)
+        window.removeEventListener('click', playOnInteraction)
+        window.removeEventListener('touchstart', playOnInteraction)
       }
     }
 
@@ -1096,14 +1231,8 @@ export default function App() {
   }, [playing])
 
   const togglePlayback = () => {
-    if (!audioRef.current) return
-    if (playing) {
-      audioRef.current.pause()
-      setPlaying(false)
-    } else {
-      audioRef.current.play().catch(err => console.log('Playback error:', err))
-      setPlaying(true)
-    }
+    synthPlayer.init()
+    setPlaying(!playing)
   }
 
   useEffect(() => {
