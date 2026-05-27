@@ -751,14 +751,20 @@ body {
 
 /* ─── Responsive Adjustments ─── */
 @media (max-width: 768px) {
+  .netflix-header div:last-child {
+    display: none !important; /* Hide menu links on phone to prevent collision */
+  }
+
   .hero-banner {
-    height: 75vh;
-    padding-top: 6rem;
-    align-items: flex-start;
+    height: auto;
+    min-height: 85vh;
+    padding-top: 7rem;
+    padding-bottom: 4rem;
+    align-items: center;
   }
   
   .hero-title {
-    font-size: 4rem;
+    font-size: 3.6rem;
   }
 
   .episode-item {
@@ -771,6 +777,22 @@ body {
   .episode-thumb-container {
     width: 100%;
     aspect-ratio: 16/9;
+  }
+
+  .cake-container {
+    width: 92%;
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  .wish-modal-content {
+    width: 92%;
+    padding: 1.5rem;
+  }
+
+  .lightbox-content {
+    width: 95%;
+    max-width: 95%;
   }
 
   .confetti-btn {
@@ -794,7 +816,7 @@ body {
 
 @media (max-width: 480px) {
   .hero-title {
-    font-size: 3rem;
+    font-size: 2.8rem;
   }
   
   .hero-btn-row {

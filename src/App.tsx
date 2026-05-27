@@ -71,6 +71,9 @@ function StardustCursorTrail() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.innerWidth <= 768
+    if (isTouchDevice) return
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -218,8 +221,10 @@ function CosmicStarfield() {
     let height = (canvas.height = window.innerHeight)
 
     const particles: Array<{ x: number; y: number; size: number; speedY: number; opacity: number }> = []
+    const isMobile = window.innerWidth <= 768
+    const particleCount = isMobile ? 18 : 55
 
-    for (let i = 0; i < 55; i++) {
+    for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
